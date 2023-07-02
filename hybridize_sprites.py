@@ -167,10 +167,7 @@ class sprite_hybridizer:
 			move_target = os.path.normpath(target_head + "/" + target_head + "." + body + "{variant}.png")
 			
 			existing_target_sprites, next_letter = self.collect_dir(target_head, target_head+"."+body)
-			#print("Currently these sprites exist for fusion:", self.pokemon_1, "+", self.pokemon_2)
-			#for s in existing_target_sprites:
-			#	print("\t", s)
-							
+	
 			head_evos = self.pokedex.relationships[self.pokemon_1]
 			body_evos = self.pokedex.relationships[self.pokemon_2]
 			
@@ -235,9 +232,13 @@ class sprite_hybridizer:
 			head_fuse = self.pokedex.num_to_name[int(head_body[0])]
 			body_fuse = self.pokedex.num_to_name[int(head_body[1])]
 			
-			next_row = (to_sprite, head_fuse, body_fuse, self.pokemon_1, self.p1_index,)
-			insertions.append(next_row)
+			to_breakdown = re.findall(prefix, os.path.basename(sprite_pair[1]))[0]
 			
+			as_pok_idx = int(to_breakdown[0])
+			as_pokemon = self.pokedex.num_to_name[as_pok_idx]
+			
+			next_row = (to_sprite, head_fuse, body_fuse, as_pokemon, as_pok_idx,)
+			insertions.append(next_row)
 		
 		self.opendb()
 		self.initialize_db()
@@ -257,7 +258,6 @@ class sprite_hybridizer:
 					print("It looks like you haven't altered any files for", revert_pokemon, "with me yet!")
 					print("There are no changes to revert.")
 				
-				
 				for f in files:
 					delete_me = os.path.normpath(f[0])
 					if os.path.exists(delete_me):
@@ -270,8 +270,6 @@ class sprite_hybridizer:
 				self.hybridized_log_connection.commit()
 				
 				self.closedb()
-				
-				
 			except:
 				print("Something went screwy. Aborting.")
 				self.closedb()
@@ -285,9 +283,6 @@ class sprite_hybridizer:
 	def run_evol(self):
 		self.collect_indexes()
 		self.add_other_evols()
-		
-	
-
 		
 class pokedex:
 	def __init__(self):
@@ -1575,7 +1570,6 @@ def options():
 	parser.add_argument('-p1',  dest = 'pok_1', default = None, help =  '')
 	parser.add_argument('-p2',  dest = 'pok_2', default = None, help =  '')
 	
-
 	args, unknown = parser.parse_known_args()
 	
 	return parser, args
